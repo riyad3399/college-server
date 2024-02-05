@@ -1,22 +1,39 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const express = require("express");
-require("dotenv").config()
+require("dotenv").config();
+const cors = require("cors");
 const app = express();
-const port = 5000;
+const port = process.env.port || 5000;
 
+// middleware
+app.use(express.json());
+app.use(cors());
 
+// all routers
+const allUsers = require("./routes/allUsers");
+const studentInformation = require("./routes/studentInformation");
 
-
-// Replace the uri string with your connection string.
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.xiw11k9.mongodb.net/?retryWrites=true&w=majority`;
 
-const client = new MongoClient(uri);
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
 
 async function run() {
   try {
-    const userCollection = client.db("cda-college").collection("users");
+    await client.connect();
 
- 
+    // from routes
+    app.use("/users", allUsers)
+    app.use("/studentInfo", studentInformation)
+
+
+
 
     await client.db("admin").command({ ping: 1 });
     console.log(
