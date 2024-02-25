@@ -13,54 +13,30 @@ const client = new MongoClient(uri, {
 });
 
 //  collection
-const studentInformationCollection = client
+const teacherInformationCollection = client
   .db("cda-college")
-  .collection("studentInfo");
+  .collection("teacherInfo");
 
-async function generateStudentID() {
-  const lastStudent = await studentInformationCollection.findOne(
-    {},
-    { sort: { studentID: -1 } }
-  );
 
-  if (!lastStudent) {
-    return "AAC1001";
-  }
-
-  const newID = incrementID(lastStudent.studentID);
-  return newID;
-}
-
-function incrementID(lastID) {
-  const numericPart = parseInt(lastID.slice(3));
-  const newNumericPart = numericPart + 1;
-  const paddedNumericPart = String(newNumericPart).padStart(4, "0");
-  const studentID = `AAC${paddedNumericPart}`;
-  return studentID;
-}
 
 router.put("/:email", async (req, res) => {
   try {
     const email = req.params.email;
     const user = req.body;
 
-    if (!user.studentID) {
-      user.studentID = await generateStudentID();
-    }
-
     const query = { email: email };
     const options = { upsert: true };
     const updateDoc = {
       $set: user,
     };
-    const result = await studentInformationCollection.updateOne(
+    const result = await teacherInformationCollection.updateOne(
       query,
       updateDoc,
       options
     );
     res.json({
       success: true,
-      message: "student information created successful",
+      message: "teacher information created successful",
       data: result,
     });
   } catch (err) {
@@ -73,10 +49,10 @@ router.put("/:email", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const result = await studentInformationCollection.find().toArray();
+    const result = await teacherInformationCollection.find().toArray();
     res.json({
       success: true,
-      message: "Get all students information successful",
+      message: "Get all teachers information successful",
       data: result,
     });
   } catch (err) {

@@ -12,6 +12,7 @@ app.use(cors());
 // all routers
 const allUsers = require("./routes/allUsers");
 const studentInformation = require("./routes/studentInformation");
+const teacherInformation = require("./routes/teacherInformation");
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.xiw11k9.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -31,6 +32,7 @@ async function run() {
     // from routes
     app.use("/users", allUsers)
     app.use("/studentInfo", studentInformation)
+    app.use("/teacherInfo", teacherInformation)
 
 
 
