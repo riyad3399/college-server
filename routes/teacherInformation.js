@@ -63,4 +63,26 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:email", async (req, res) => {
+  try {
+    const email = req.params.email;
+    const query = { email: email };
+    const result = await teacherInformationCollection.findOne(query);
+    res.json({
+      success: true,
+      message: "Get single teacher information successful",
+      data: result,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+
+
+
+
 module.exports = router;
